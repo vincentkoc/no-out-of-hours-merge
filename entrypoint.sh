@@ -10,6 +10,6 @@ export CUSTOM_MESSAGE="$5"
 export CHECK_EXISTING_COMMENT="$6"
 
 
-python3 /check_merge_time.py
+python3 /main.py
 
 echo "Done"
