@@ -1,8 +1,9 @@
 import unittest
-from main import validate_timezone, validate_restricted_times, validate_custom_message
+
+from main import validate_custom_message, validate_restricted_times, validate_timezone
+
 
 class TestMain(unittest.TestCase):
-
     def test_validate_timezone(self):
         with self.assertRaises(ValueError):
             validate_timezone("Invalid/Timezone")
@@ -24,7 +25,10 @@ class TestMain(unittest.TestCase):
     def test_validate_custom_message(self):
         with self.assertRaises(ValueError):
             validate_custom_message("   ")
-        validate_custom_message("⚠️ **PR merging is not allowed outside business hours.** ⚠️")
+        validate_custom_message(
+            "⚠️ **PR merging is not allowed outside business hours.** ⚠️"
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
