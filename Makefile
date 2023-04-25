@@ -71,6 +71,9 @@ coverage:
 	$(PYTHON) -m coverage erase
 	$(PYTHON) -m coverage run --source="./src/" -m unittest discover -t ./src/ -s ./src/tests
 	$(PYTHON) -m coverage html
+	$(PYTHON) -m coverage xml -i
+	mv -f coverage.xml coverage/coverage.xml
+	$(PYTHON) -m coverage report
 
 # Install requirements
 install-requirements:
