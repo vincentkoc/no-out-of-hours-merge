@@ -3,6 +3,7 @@ FROM python:3.9-slim
 LABEL version="1.0.0"
 LABEL repository="https://github.com/koconder/no-out-of-hours-merge"
 LABEL maintainer="Vincent Koc"
+ENV DOCKER_BUILDKIT=1
 
 USER root
 
