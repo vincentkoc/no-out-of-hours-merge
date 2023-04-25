@@ -4,12 +4,14 @@ LABEL version="1.0.0"
 LABEL repository="https://github.com/koconder/no-out-of-hours-merge"
 LABEL maintainer="Vincent Koc"
 
-RUN useradd -u 8877 dummy
-USER dummy
+USER root
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
+RUN useradd -u 8877 dummy
+USER dummy
 
 COPY entrypoint.sh /entrypoint.sh
 COPY src/main.py /src/main.py
