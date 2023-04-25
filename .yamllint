@@ -1,0 +1,30 @@
+extends: default
+ignore: |
+    venv/
+    .venv/
+    .git/
+    coverage/
+
+rules:
+    brackets: disable
+    document-start: disable
+    # Configure empty lines to allow for a cleaner YAML structure
+    empty-lines:
+        max: 2
+        max-start: 0
+        max-end: 0
+    indentation:
+        spaces: 4
+        indent-sequences: whatever
+    # Check for duplicate keys in the YAML file
+    key-duplicates: enable
+    line-length:
+        max: 140
+        allow-non-breakable-inline-mappings: true
+    truthy:
+        # .github workflow uses "on:" (but not as a truthy value)
+        check-keys: false
+    # Enforce comments style
+    comments:
+        require-starting-space: true
+        min-spaces-from-content: 1
