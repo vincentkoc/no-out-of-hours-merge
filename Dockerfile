@@ -38,4 +38,4 @@ RUN chmod +x /entrypoint.sh
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["python", "/src/main.py"]
