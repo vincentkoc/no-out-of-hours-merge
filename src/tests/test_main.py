@@ -77,7 +77,7 @@ class TestMain(unittest.TestCase):
 
         fixed_datetime = datetime.datetime(
             2023, 2, 2, tzinfo=pytz.UTC
-        )  # New Year's Day
+        )  # Not New Year's Day
         self.assertFalse(
             is_holiday(fixed_datetime, holidays_config),
             "February 2nd should not be recognized as a holiday.",
@@ -95,16 +95,20 @@ class TestMain(unittest.TestCase):
             "dates": [],
             "holidays": {"country": "US", "state": "CA", "intervals": [(0, 24)]},
         }
-        timezone = "Australia/Sydney"
+        timezone = "Europe/London"
 
         # Test with a time outside the restricted hours
-        fixed_datetime = datetime.datetime(2023, 1, 3, 12, 0)  # Tuesday, 12:00 PM
+        fixed_datetime = datetime.datetime(
+            2023, 1, 3, 12, 0, tzinfo=pytz.UTC
+        )  # Tuesday, 12:00 PM
         with freeze_time(fixed_datetime):
             result = is_restricted_time(timezone, restricted_times, now=fixed_datetime)
             self.assertFalse(result, "This time should not be restricted.")
 
         # Test with a time inside the restricted hours
-        fixed_datetime = datetime.datetime(2023, 1, 3, 6, 0)  # Tuesday, 6:00 AM
+        fixed_datetime = datetime.datetime(
+            2023, 1, 3, 6, 0, tzinfo=pytz.UTC
+        )  # Tuesday, 6:00 AM
         with freeze_time(fixed_datetime):
             result = is_restricted_time(timezone, restricted_times, now=fixed_datetime)
             self.assertTrue(result, "This time should be restricted.")
