@@ -97,7 +97,7 @@ install-venv:
 # Clean generated files
 clean:
 	@echo "✨ Cleaning all cache, coverage and venv..."
-	rm -rf .venv coverage/* .pytest_cache/ .mypy_cache/ .coverage
+	rm -rf .venv coverage/* .pytest_cache/ .mypy_cache/ .coverage __pycache__ *.pyc
 
 # Run prec-commit hooks
 precommit:
