@@ -34,5 +34,6 @@ setup(
         "python-dateutil>=2.8.1",
         "pytz>=2021.1",
         "holidays>=0.11.3",
+        "regex>=2023.3.22",
     ],
 )
