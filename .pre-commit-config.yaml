@@ -85,13 +85,8 @@ repos:
             exclude: ^tests/
             args: [--no-strict-optional, --ignore-missing-imports]
             additional_dependencies:
-                - lxml
-                - numpy
-                - pandas
-                - requests
-                - torch
-                - scikit-learn
                 - types-pytz
+                - types-python-dateutil
 
     - repo: https://github.com/PyCQA/flake8
       rev: 6.0.0
