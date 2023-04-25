@@ -165,8 +165,8 @@ def main():
     # Validate the inputs
     validate_timezone(timezone)
     try:
-        print("Restricted Times:\n")
-        print(restricted_times_json)
+        # print("Restricted Times:\n")
+        # print(restricted_times_json)
         restricted_times = json.loads(restricted_times_json)
         validate_restricted_times(restricted_times)
     except ValueError as e:
