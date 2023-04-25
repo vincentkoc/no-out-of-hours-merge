@@ -25,6 +25,6 @@ USER dummy
 COPY entrypoint.sh /entrypoint.sh
 COPY src/main.py /src/main.py
 
-RUN chmod +x /entrypoint.sh
+RUN sudo chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
