@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 import sys
-from typing import Dict, List, Tuple
+from typing import Any, Dict
 
 import holidays
 import pytz
@@ -50,30 +50,33 @@ def is_holiday(now, holidays_config):
     return now.date() in country_holidays
 
 
-def validate_restricted_times(
-    restricted_times: Dict[str, List[Tuple[float, float]]]
-) -> None:
+def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
     valid_days = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
-    if not set(restricted_times.keys()).issubset(valid_days):
-        raise ValueError(
-            "❌ Invalid day keys in the restricted_times dictionary. Use "
-            + "'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'."
-        )
 
-    for day, intervals in restricted_times.items():
-        if not isinstance(intervals, list):
+    if "weekly" not in restricted_times:
+        raise ValueError("Missing 'weekly' key in restricted_times dictionary.")
+
+    for rule in restricted_times["weekly"]:
+        if not set(rule["days"]).issubset(valid_days):
             raise ValueError(
-                f"❌ Invalid value for '{day}' in restricted_times. "
+                "Invalid day keys in the restricted_times dictionary. Use "
+                + "'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'."
+            )
+
+        if not isinstance(rule["intervals"], list):
+            raise ValueError(
+                f"Invalid value for '{rule['days']}' in restricted_times. "
                 + " It should be a list of tuples."
             )
-        for interval in intervals:
+        for interval in rule["intervals"]:
             if (
                 not isinstance(interval, tuple)
                 or len(interval) != 2
                 or not all(isinstance(n, (int, float)) for n in interval)
             ):
                 raise ValueError(
-                    f"Invalid interval '{interval}' for '{day}' in restricted_times."
+                    f"Invalid interval '{interval}' for '{rule['days']}'"
+                    + " in restricted_times."
                     + " It should be a tuple with two numbers."
                 )
 
@@ -114,7 +117,7 @@ def is_restricted_time(timezone, restricted_times):
             return True
 
     if is_holiday(now, restricted_times.get("holidays")):
-        holiday_intervals = restricted_times["holidays"]["intervals"]
+        holiday_intervals = restricted_times["holidays"].get("intervals", [])
         if any(
             start <= now.hour + now.minute / 60 < end
             for start, end in holiday_intervals
