@@ -12,7 +12,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /entrypoint.sh
-COPY check_merge_time.py /check_merge_time.py
+COPY main.py /main.py
 
 RUN chmod +x /entrypoint.sh
 
