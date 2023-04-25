@@ -6,6 +6,7 @@ from main import post_comment_on_pr
 
 class TestPostCommentOnPR(unittest.TestCase):
     @patch("src.main.Github")
+    @patch.dict("os.environ", {"GITHUB_REPOSITORY": "fake_owner/fake_repo"})
     def test_post_comment_on_pr(self, mock_github):
         # Set up mock objects
         mock_repo = MagicMock()
