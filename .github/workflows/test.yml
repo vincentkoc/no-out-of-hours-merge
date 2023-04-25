@@ -50,7 +50,7 @@ jobs:
                       {
                         "weekly": [
                           {
-                            "days": ["mon", "tue", "wed", "thu", "fri"],
+                            "days": ["mon"],
                             "intervals": [[0, 7], [16.5, 24]]
                           }
                         ],
