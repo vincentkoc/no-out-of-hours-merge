@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import re
 import sys
 from typing import Any, Dict
 
@@ -116,13 +117,11 @@ def is_restricted_time(timezone, restricted_times):
         ):
             return True
 
-    if is_holiday(now, restricted_times.get("holidays")):
-        holiday_intervals = restricted_times["holidays"].get("intervals", [])
-        if any(
-            start <= now.hour + now.minute / 60 < end
-            for start, end in holiday_intervals
-        ):
-            return True
+    holiday_intervals = restricted_times.get("holidays", {}).get("intervals", [])
+    if is_holiday(now, restricted_times.get("holidays")) and any(
+        start <= now.hour + now.minute / 60 < end for start, end in holiday_intervals
+    ):
+        return True
 
     return False
 
@@ -146,7 +145,7 @@ def main():
     pr_title = os.environ["INPUT_PR_TITLE"]
     timezone = os.environ.get("INPUT_TIMEZONE", "Australia/Sydney")
     restricted_times_json = os.environ.get(
-        "INPUT_RESTRICTED_TIMES", restricted_times_default
+        "INPUT_RESTRICTED_TIMES", json.dumps(restricted_times_default)
     )
     custom_message = os.environ.get(
         "INPUT_CUSTOM_MESSAGE",
@@ -171,9 +170,10 @@ def main():
         print("✅ Merging is allowed at this time.")
         sys.exit(0)
 
-    if "hotfix:" in pr_title.lower():
+    if re.search(r"(?i)hotfix\s*:", pr_title):
         print("✅ Hotfix PRs are allowed to merge outside business hours.")
         sys.exit(0)
+
     print("❌ Merging is not allowed during the specified time.")
     pr_number = int(os.environ["GITHUB_PR_NUMBER"])
     post_comment_on_pr(github_token, pr_number, custom_message, check_existing_comment)
