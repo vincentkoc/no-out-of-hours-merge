@@ -1,0 +1,13 @@
+name: 'No Weekend Merge'
+description: 'Block PR merges outside business hours and without hotfix in the title'
+inputs:
+  github_token:
+    description: 'GitHub token'
+    required: true
+  pr_title:
+    description: 'Title of the pull request'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
