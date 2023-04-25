@@ -10,6 +10,6 @@ export CUSTOM_MESSAGE="$5"
 export CHECK_EXISTING_COMMENT="$6"
 
 
-python3 /main.py
+python3 /src/main.py
 
 echo "Done"
