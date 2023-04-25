@@ -148,8 +148,10 @@ def main():
     try:
         restricted_times = json.loads(restricted_times_json)
         validate_restricted_times(restricted_times)
-    except ValueError:
-        raise ValueError(f"❌ Error parsing RESTRICTED_TIMES {restricted_times_json}")
+    except ValueError as e:
+        raise ValueError(
+            f"❌ Error parsing RESTRICTED_TIMES {restricted_times_json}"
+        ) from e
     validate_custom_message(custom_message)
 
     if not is_restricted_time(timezone, restricted_times):
