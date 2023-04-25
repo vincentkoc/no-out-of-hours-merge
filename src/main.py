@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import sys
@@ -82,8 +83,9 @@ def validate_custom_message(custom_message: str) -> None:
         raise ValueError("Custom message cannot be an empty string.")
 
 
-def is_restricted_time(timezone, now, restricted_times):
+def is_restricted_time(timezone, restricted_times):
     tz = pytz.timezone(timezone)
+    now = datetime.datetime.now(tz)
     now = now.astimezone(tz)
 
     for rule in restricted_times["weekly"]:
@@ -114,15 +116,16 @@ def is_restricted_time(timezone, now, restricted_times):
 
 def main():
     # Get the inputs from the environment
-    github_token = os.environ["GITHUB_TOKEN"]
-    pr_title = os.environ["CI_PR_TITLE"]
-    timezone = os.environ.get("TIMEZONE", "Australia/Sydney")
-    restricted_times_json = os.environ.get("RESTRICTED_TIMES", None)
+    github_token = os.environ["INPUT_GITHUB_TOKEN"]
+    pr_title = os.environ["INPUT_PR_TITLE"]
+    timezone = os.environ.get("INPUT_TIMEZONE", "Australia/Sydney")
+    restricted_times_json = os.environ.get("INPUT_RESTRICTED_TIMES", None)
     custom_message = os.environ.get(
-        "CUSTOM_MESSAGE", "⚠️ **PR merging is not allowed outside business hours.** ⚠️"
+        "INPUT_CUSTOM_MESSAGE",
+        "⚠️ **PR merging is not allowed outside business hours.** ⚠️",
     )
     check_existing_comment = (
-        os.environ.get("CHECK_EXISTING_COMMENT", "true").lower() == "true"
+        os.environ.get("INPUT_CHECK_EXISTING_COMMENT", "true").lower() == "true"
     )
 
     # Validate the inputs
