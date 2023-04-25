@@ -67,14 +67,16 @@ def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
                 + " It should be a list of tuples."
             )
         for interval in rule["intervals"]:
-            if (
-                not isinstance(interval, tuple)
-                or len(interval) != 2
-                or not all(isinstance(n, (int, float)) for n in interval)
-            ):
+            if not isinstance(interval, tuple) or len(interval) != 2:
                 raise ValueError(
                     f"Invalid interval '{interval}' for '{rule['days']}'"
                     + " in restricted_times. It should be a tuple with two numbers."
+                )
+            if interval[1] <= interval[0]:
+                raise ValueError(
+                    f"Invalid interval '{interval}' for '{rule['days']}'"
+                    + " in restricted_times. The second number should"
+                    + " be greater than the first."
                 )
 
 
@@ -156,6 +158,8 @@ def main():
     validate_timezone(timezone)
     try:
         restricted_times = json.loads(restricted_times_json)
+        print("Restricted Times:\n")
+        print(restricted_times)
         validate_restricted_times(restricted_times)
     except ValueError as e:
         raise ValueError(
