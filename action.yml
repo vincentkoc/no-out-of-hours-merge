@@ -1,36 +1,36 @@
-name: 'No Weekend Merge'
-description: 'Block PR merges outside business hours and without hotfix in the title'
+name: No Weekend Merge
+description: Block PR merges outside business hours and without hotfix in the title
 inputs:
-  GITHUB_TOKEN:
-    description: 'GitHub token'
-    required: true
-  PR_TITLE:
-    description: 'Title of the pull request'
-    required: true
-  TIMEZONE:
-    description: 'Timezone to use for checking the current time'
-    required: false
-    default: 'Australia/Sydney'
-  RESTRICTED_TIMES:
-    description: 'A JSON object containing restricted times for each day of the week'
-    required: false
-    default: >
-      {
-        "mon": [[0, 7], [16.5, 24]],
-        "tue": [[0, 7], [16.5, 24]],
-        "wed": [[0, 7], [16.5, 24]],
-        "thu": [[0, 7], [16.5, 24]],
-        "fri": [[0, 7], [16.5, 24]],
-        "sat": [[0, 24]],
-        "sun": [[0, 24]]
-      }
-  CUSTOM_MESSAGE:
-    description: 'Custom message to be posted as a comment on the PR if merging is not allowed'
-    required: false
-  CHECK_EXISTING_COMMENT:
-    description: 'Boolean flag to enable/disable checking for existing comment with the same message'
-    required: false
-    default: 'true'
+    GITHUB_TOKEN:
+        description: GitHub token
+        required: true
+    PR_TITLE:
+        description: Title of the pull request
+        required: true
+    TIMEZONE:
+        description: Timezone to use for checking the current time
+        required: false
+        default: Australia/Sydney
+    RESTRICTED_TIMES:
+        description: A JSON object containing restricted times for each day of the week
+        required: false
+        default: >
+            {
+              "mon": [[0, 7], [16.5, 24]],
+              "tue": [[0, 7], [16.5, 24]],
+              "wed": [[0, 7], [16.5, 24]],
+              "thu": [[0, 7], [16.5, 24]],
+              "fri": [[0, 7], [16.5, 24]],
+              "sat": [[0, 24]],
+              "sun": [[0, 24]]
+            }
+    CUSTOM_MESSAGE:
+        description: Custom message to be posted as a comment on the PR if merging is not allowed
+        required: false
+    CHECK_EXISTING_COMMENT:
+        description: Boolean flag to enable/disable checking for existing comment with the same message
+        required: false
+        default: 'true'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+    using: docker
+    image: Dockerfile
