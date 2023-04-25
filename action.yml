@@ -1,5 +1,9 @@
-name: No Weekend Merge
-description: Block PR merges outside business hours and without hotfix in the title
+name: No Out of Hours Merge
+description: Block PR merges outside business hours, holidays and other specific time windows.
+author: Vincent Koc
+branding:
+    icon: thumbs-down
+    color: red
 inputs:
     GITHUB_TOKEN:
         description: GitHub token
