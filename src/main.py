@@ -89,7 +89,17 @@ def is_restricted_time(timezone, restricted_times):
     now = now.astimezone(tz)
 
     for rule in restricted_times["weekly"]:
-        if now.weekday() in [d.weekday for d in rule["days"]] and any(
+        day_map = {
+            "mon": MO,
+            "tue": TU,
+            "wed": WE,
+            "thu": TH,
+            "fri": FR,
+            "sat": SA,
+            "sun": SU,
+        }
+        mapped_days = [day_map[d] for d in rule["days"]]
+        if now.weekday() in [d.weekday for d in mapped_days] and any(
             start <= now.hour + now.minute / 60 < end
             for start, end in rule["intervals"]
         ):
