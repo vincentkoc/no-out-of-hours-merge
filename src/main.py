@@ -87,9 +87,10 @@ def validate_custom_message(custom_message: str) -> None:
         raise ValueError("Custom message cannot be an empty string.")
 
 
-def is_restricted_time(timezone, restricted_times):
+def is_restricted_time(timezone, restricted_times, now=None):
     tz = pytz.timezone(timezone)
-    now = datetime.datetime.now(tz)
+    if now is None:
+        now = datetime.datetime.now(tz)
     now = now.astimezone(tz)
 
     for rule in restricted_times["weekly"]:
