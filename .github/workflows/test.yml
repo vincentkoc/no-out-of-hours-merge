@@ -21,7 +21,7 @@ jobs:
 
             - name: Run tests
               run: |
-                  python -m unittest discover tests
+                  python -m unittest discover -t ./src/ -s ./src/tests
 
             - name: Test Restrict PR Merge Action
               uses: ./ # Use an action in the same repository
