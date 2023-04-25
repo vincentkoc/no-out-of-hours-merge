@@ -92,6 +92,8 @@ htmlcov
 junit
 .coverage
 .coverage.*
+coverage/*
+!coverage/.gitkeep
 coverage.xml
 poetry.lock
 .tox/
