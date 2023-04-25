@@ -8,12 +8,15 @@ A GitHub Action that prevents merging pull requests outside of specified busines
 - Optional custom message for pull request comments
 - Allows hotfixes to bypass the time restrictions
 - Provides informative error messages and input validation
+- Allows for rules on specific days
+- Support for holidays (thanks to holidays pip package)
 
 ## Requirements
 
-- Python 3.6 or higher
-- PyGithub
-- pytz
+- Python 3.9 or higher
+- [PyGithub](https://pypi.org/project/PyGithub/)
+- [pytz](https://pypi.org/project/pytz/)
+- [holidays](https://pypi.org/project/holidays/)
 
 ## Usage
 
