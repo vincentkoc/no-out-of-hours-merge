@@ -99,7 +99,6 @@ class TestMain(unittest.TestCase):
 
         # Test with a time outside the restricted hours
         fixed_datetime = datetime.datetime(2023, 1, 3, 12, 0)  # Tuesday, 12:00 PM
-
         with freeze_time(fixed_datetime):
             result = is_restricted_time(timezone, restricted_times, now=fixed_datetime)
             self.assertFalse(result, "This time should not be restricted.")
