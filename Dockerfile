@@ -1,5 +1,6 @@
 FROM python:3.9-slim
 
+RUN useradd -u 8877 dummy
 USER dummy
 
 LABEL version="1.0.0"
