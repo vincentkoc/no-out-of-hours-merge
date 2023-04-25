@@ -19,12 +19,15 @@ RUN apt-get update -yqq && \
     /usr/share/doc \
     /usr/share/doc-base
 
-RUN useradd -u 8877 dummy
-USER dummy
 
 COPY entrypoint.sh /entrypoint.sh
 COPY src/main.py /src/main.py
 
-RUN sudo chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+RUN chown -R dummy:dummy /entrypoint.sh && \
+    chown -R dummy:dummy /src/
+
+RUN useradd -u 8877 dummy
+USER dummy
 
 ENTRYPOINT ["/entrypoint.sh"]
