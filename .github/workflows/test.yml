@@ -47,20 +47,11 @@ jobs:
                           "weekly": [
                               {
                                   "days": ["mon", "tue", "wed", "thu", "fri"],
-                                  "intervals": [
-                                      [0, 9],
-                                      [17, 24]
-                                  ]
-                              },
-                              {
-                                  "days": ["sat", "sun"],
-                                  "intervals": [
-                                      [0, 24]
-                                  ]
+                                  "intervals": [(0, 7), (16.5, 24)],
                               }
                           ],
-                          "dates": [],
-                          "holidays": {}
+                          "dates": [{"date": "2023-12-25", "intervals": [(0, 24)]}],
+                          "holidays": {"country": "AU", "state": "NSW", "intervals": [(0, 24)]}
                       }
                   CUSTOM_MESSAGE: ⚠️ **PR merging is not allowed outside business hours.** ⚠️
                   CHECK_EXISTING_COMMENT: 'true'
