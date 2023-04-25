@@ -7,7 +7,27 @@ inputs:
   pr_title:
     description: 'Title of the pull request'
     required: true
-
+  timezone:
+    description: 'Timezone to use for checking the current time'
+    required: false
+    default: 'Australia/Sydney'
+  restricted_times:
+    description: 'A JSON object containing restricted times for each day of the week'
+    required: false
+    default: >
+      {
+        "mon": [[0, 7], [16.5, 24]],
+        "tue": [[0, 7], [16.5, 24]],
+        "wed": [[0, 7], [16.5, 24]],
+        "thu": [[0, 7], [16.5, 24]],
+        "fri": [[0, 7], [16.5, 24]],
+        "sat": [[0, 24]],
+        "sun": [[0, 24]]
+      }
+  custom_message:
+    description: 'Custom message to be posted on the PR if the merge is blocked'
+    required: false
+    default: '⚠️ **PR merging is not allowed outside business hours.** ⚠️'
 runs:
   using: 'docker'
   image: 'Dockerfile'
