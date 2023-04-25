@@ -85,7 +85,7 @@ repos:
             exclude: ^tests/
             args: [--no-strict-optional, --ignore-missing-imports]
             additional_dependencies:
-                - requests
+                - types-requests
                 - types-pytz
                 - types-python-dateutil
 
