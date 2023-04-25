@@ -2,8 +2,6 @@ name: Test No Out Hours Merge Action
 
 on:
     pull_request:
-        branches:
-            - master
         types: [opened, synchronize, edited]
     push:
         branches:
