@@ -6,9 +6,17 @@ LABEL maintainer="Vincent Koc"
 
 USER root
 
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
+    apt-get update -yqq && \
     apt-get install -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean && \
+    rm -rf \
+    /var/lib/apt/lists/* \
+    /tmp/* \
+    /var/tmp/* \
+    /usr/share/man \
+    /usr/share/doc \
+    /usr/share/doc-base
 
 RUN useradd -u 8877 dummy
 USER dummy
