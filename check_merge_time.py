@@ -1,4 +1,6 @@
-import datetime
+from dateutil import parser, rrule
+from dateutil.rrule import MO, TU, WE, TH, FR, SA, SU
+import holidays
 import json
 import os
 import sys
@@ -27,6 +29,19 @@ def validate_timezone(timezone: str) -> None:
     if timezone not in pytz.all_timezones:
         raise ValueError(f"Invalid timezone: {timezone}. Please provide a valid timezone.")
 
+def is_holiday(now, holidays_config):
+    if not holidays_config:
+        return False
+
+    country_holidays = holidays.CountryHoliday(
+        holidays_config["country"],
+        prov=holidays_config.get("state", None),
+        state=holidays_config.get("state", None)
+    )
+
+    return now.date() in country_holidays
+
+
 def validate_restricted_times(restricted_times: Dict[str, List[Tuple[float, float]]]) -> None:
     valid_days = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
     if not set(restricted_times.keys()).issubset(valid_days):
@@ -43,13 +58,22 @@ def validate_custom_message(custom_message: str) -> None:
     if not custom_message.strip():
         raise ValueError("Custom message cannot be an empty string.")
 
-def check_restricted_time(timezone: str, restricted_times: Dict[str, List[Tuple[float, float]]]) -> bool:
-    tz = pytz.timezone(timezone)
-    now = datetime.datetime.now(tz)
-    weekday = now.strftime("%a").lower()
-    hour = now.hour + (now.minute / 60)
+def is_restricted_time(now, restricted_times):
+    for rule in restricted_times["weekly"]:
+        if now.weekday() in [d.weekday for d in rule["days"]] and any(start <= now.hour + now.minute / 60 < end for start, end in rule["intervals"]):
+            return True
 
-    return any(start <= hour < end for start, end in restricted_times[weekday])
+    for rule in restricted_times["dates"]:
+        date = parser.parse(rule["date"]).date()
+        if now.date() == date and any(start <= now.hour + now.minute / 60 < end for start, end in rule["intervals"]):
+            return True
+
+    if is_holiday(now, restricted_times.get("holidays")):
+        holiday_intervals = restricted_times["holidays"]["intervals"]
+        if any(start <= now.hour + now.minute / 60 < end for start, end in holiday_intervals):
+            return True
+
+    return False
 
 def main():
     # Get the inputs from the environment
@@ -67,13 +91,19 @@ def main():
         validate_restricted_times(restricted_times)
     else:
         restricted_times = {
-            "mon": [(0, 7), (16.5, 24)],
-            "tue": [(0, 7), (16.5, 24)],
-            "wed": [(0, 7), (16.5, 24)],
-            "thu": [(0, 7), (16.5, 24)],
-            "fri": [(0, 7), (16.5, 24)],
-            "sat": [(0, 24)],
-            "sun": [(0, 24)],
+            "weekly": [
+                {"days": [MO, TU, WE, TH, FR], "intervals": [(0, 7), (16.5, 24)]},
+                {"days": [SA, SU], "intervals": [(0, 24)]}
+            ],
+            "dates": [
+                {"date": "2023-12-25", "intervals": [(0, 24)]},
+                {"date": "2023-12-26", "intervals": [(0, 24)]}
+            ],
+            "holidays": {
+                "country": "US",
+                "state": "CA",
+                "intervals": [(0, 24)]
+            }
         }
     validate_custom_message(custom_message)
 
