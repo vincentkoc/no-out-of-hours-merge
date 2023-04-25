@@ -42,21 +42,18 @@ def is_holiday(now, holidays_config):
     if not holidays_config:
         return False
 
-    country_holidays = holidays.CountryHoliday(
-        holidays_config["country"],
-        prov=holidays_config.get("state", None),
-        state=holidays_config.get("state", None),
+    country_holidays = holidays.country_holidays(
+        country=holidays_config["country"], subdiv=holidays_config.get("state", None)
     )
 
     return now.date() in country_holidays
 
 
 def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
-    valid_days = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
-
     if "weekly" not in restricted_times:
         raise ValueError("Missing 'weekly' key in restricted_times dictionary.")
 
+    valid_days = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
     for rule in restricted_times["weekly"]:
         if not set(rule["days"]).issubset(valid_days):
             raise ValueError(
@@ -66,7 +63,7 @@ def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
 
         if not isinstance(rule["intervals"], list):
             raise ValueError(
-                f"Invalid value for '{rule['days']}' in restricted_times. "
+                f"Invalid value for '{rule['days']}' in restricted_times."
                 + " It should be a list of tuples."
             )
         for interval in rule["intervals"]:
@@ -77,8 +74,7 @@ def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
             ):
                 raise ValueError(
                     f"Invalid interval '{interval}' for '{rule['days']}'"
-                    + " in restricted_times."
-                    + " It should be a tuple with two numbers."
+                    + " in restricted_times. It should be a tuple with two numbers."
                 )
 
 
@@ -131,14 +127,13 @@ def main():
     # Set Defaults
     restricted_times_default = {
         "weekly": [
-            {"days": [MO, TU, WE, TH, FR], "intervals": [(0, 7), (16.5, 24)]},
-            {"days": [SA, SU], "intervals": [(0, 24)]},
+            {
+                "days": ["mon", "tue", "wed", "thu", "fri"],
+                "intervals": [(0, 7), (16.5, 24)],
+            }
         ],
-        "dates": [
-            {"date": "2023-12-25", "intervals": [(0, 24)]},
-            {"date": "2023-12-26", "intervals": [(0, 24)]},
-        ],
-        "holidays": {"country": "US", "state": "CA", "intervals": [(0, 24)]},
+        "dates": [{"date": "2023-12-25", "intervals": [(0, 24)]}],
+        "holidays": {"country": "AU", "state": "NSW", "intervals": [(0, 24)]},
     }
 
     # Get the inputs from the environment
