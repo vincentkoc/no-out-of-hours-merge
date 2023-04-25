@@ -1,2 +1,5 @@
 # Import the all requirements from the requirements.txt file
 -r requirements.txt
+
+flake8
+black
