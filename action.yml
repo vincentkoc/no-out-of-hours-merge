@@ -5,24 +5,34 @@ inputs:
         description: GitHub token
         required: true
     PR_TITLE:
-        description: Title of the pull request
+        description: Title of the pull request (if you want check for hotfix)
         required: true
     TIMEZONE:
         description: Timezone to use for checking the current time
         required: false
-        default: Australia/Sydney
+        default: Europe/London
     RESTRICTED_TIMES:
-        description: A JSON object containing restricted times for each day of the week
+        description: A JSON object containing restricted times based on weekdays, or specific dates or holidays
         required: false
         default: >
             {
-              "mon": [[0, 7], [16.5, 24]],
-              "tue": [[0, 7], [16.5, 24]],
-              "wed": [[0, 7], [16.5, 24]],
-              "thu": [[0, 7], [16.5, 24]],
-              "fri": [[0, 7], [16.5, 24]],
-              "sat": [[0, 24]],
-              "sun": [[0, 24]]
+              "weekly": [
+                {
+                  "days": ["mon", "tue", "wed", "thu", "fri"],
+                  "intervals": [[0, 7], [16.5, 24]]
+                }
+              ],
+              "dates": [
+                {
+                  "date": "2023-12-25",
+                  "intervals": [[0, 24]]
+                }
+              ],
+              "holidays": {
+                "country": "GB",
+                "state": "UK",
+                "intervals": [[0, 24]]
+              }
             }
     CUSTOM_MESSAGE:
         description: Custom message to be posted as a comment on the PR if merging is not allowed
