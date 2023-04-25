@@ -8,9 +8,8 @@ RUN useradd -u 8877 dummy
 USER dummy
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    gh \
-    && rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /entrypoint.sh
 COPY src/main.py /src/main.py
