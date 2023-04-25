@@ -9,6 +9,7 @@ on:
 
 jobs:
     test:
+        name: Test github action 🧪
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
