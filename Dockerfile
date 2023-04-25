@@ -7,8 +7,8 @@ ENV DOCKER_BUILDKIT=1
 
 USER root
 
-RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
-    apt-get update -yqq && \
+# RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
+RUN apt-get update -yqq && \
     apt-get install -y --no-install-recommends && \
     apt-get clean && \
     rm -rf \
