@@ -7,7 +7,7 @@ jobs:
     stale:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/stale@v4
+            - uses: actions/stale@v8
               with:
                   stale-issue-message: This issue has not been touched in quite sometime and is now marked as stale.
                   stale-pr-message: This pull request has not been touched in quite sometime and is now marked as stale.
