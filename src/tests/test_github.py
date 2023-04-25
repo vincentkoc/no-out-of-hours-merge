@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+import requests
+
 from main import post_comment_on_pr
 
 
@@ -8,6 +10,15 @@ class TestPostCommentOnPR(unittest.TestCase):
     @patch("src.main.Github")
     @patch.dict("os.environ", {"GITHUB_REPOSITORY": "fake_owner/fake_repo"})
     def test_post_comment_on_pr(self, mock_github):
+        # Disable SSL verification for testing purposes
+        original_send = requests.Session.send
+
+        def send_no_verify(self, request, **kwargs):
+            kwargs["verify"] = False
+            return original_send(self, request, **kwargs)
+
+        requests.Session.send = send_no_verify
+
         # Set up mock objects
         mock_repo = MagicMock()
         mock_pr = MagicMock()
@@ -30,6 +41,9 @@ class TestPostCommentOnPR(unittest.TestCase):
 
         # Check that the create_issue_comment method was called with the correct message
         mock_pr.create_issue_comment.assert_called_with(message)
+
+        # Revert back to the original 'send' method
+        requests.Session.send = original_send
 
 
 if __name__ == "__main__":
