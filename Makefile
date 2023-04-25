@@ -1,4 +1,4 @@
-.PHONY: help lint format test test-coverage install-requirements install-venv update-pip-requirements clean precommit update-precommit
+.PHONY: help lint format test coverage install-requirements install-venv update-pip-requirements clean precommit update-precommit
 .DEFAULT_GOAL := help
 
 # Setup ENV
@@ -44,7 +44,7 @@ help:
 	@echo "  lint"
 	@echo "  format"
 	@echo "  test"
-	@echo "  test-coverage"
+	@echo "  coverage"
 	@echo "  clean"
 	@echo "  precommit"
 	@echo "  help"
@@ -53,22 +53,24 @@ help:
 # Lint code
 lint:
 	@echo "🚜 Linting code with flake8..."
-	$(PYTHON) -m flake8 main.py tests/ --count
+	$(PYTHON) -m flake8 src/ --count
 
 # Format code
 format:
 	@echo "🚜 Formatting code with black..."
-	$(PYTHON) -m black main.py tests/
+	$(PYTHON) -m black src/
 
-# Run pytest
+# Run unit tests
 test:
 	@echo "🧪 Running unit tests..."
-	$(PYTHON) -m unittest discover tests
+	$(PYTHON) -m unittest discover -t ./src/ -s ./src/tests
 
-# Run pytest with coverage
-test-coverage:
+# Run unit tests with coverage
+coverage:
 	@echo "🧪 Running unit tests and generating coverage..."
-	$(PYTHON) -m coverage run --source=. -m unittest discover tests
+	$(PYTHON) -m coverage erase
+	$(PYTHON) -m coverage run --source="./src/" -m unittest discover -t ./src/ -s ./src/tests
+	$(PYTHON) -m coverage html
 
 # Install requirements
 install-requirements:
