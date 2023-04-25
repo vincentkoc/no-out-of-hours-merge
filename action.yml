@@ -51,8 +51,8 @@ jobs:
                   file: Dockerfile
                   push: true
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  PR_TITLE: ${{ github.event.pull_request.title }}
+                  GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+                  PR_TITLE: ${{ inputs.PR_TITLE }}
                   TIMEZONE: ${{ inputs.TIMEZONE }}
                   RESTRICTED_TIMES: ${{ inputs.RESTRICTED_TIMES }}
                   CUSTOM_MESSAGE: ${{ inputs.CUSTOM_MESSAGE }}
