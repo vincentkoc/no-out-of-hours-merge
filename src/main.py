@@ -115,12 +115,13 @@ def is_restricted_time(timezone, restricted_times, now=None):
             return True
 
     holiday_intervals = restricted_times.get("holidays", {}).get("intervals", [])
-    if is_holiday(now, restricted_times.get("holidays")) and any(
-        start <= now.hour + now.minute / 60 < end for start, end in holiday_intervals
-    ):
-        return True
-
-    return False
+    return bool(
+        is_holiday(now, restricted_times.get("holidays"))
+        and any(
+            start <= now.hour + now.minute / 60 < end
+            for start, end in holiday_intervals
+        )
+    )
 
 
 def main():
