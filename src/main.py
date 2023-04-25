@@ -126,6 +126,14 @@ def is_restricted_time(timezone, restricted_times, now=None):
     )
 
 
+def parse_pull_request_id(github_ref):
+    pattern = r"refs/pull/(\d+)/merge"
+    if match := re.search(pattern, github_ref):
+        return int(match[1])
+    else:
+        raise ValueError(f"Invalid GitHub ref: {github_ref}")
+
+
 def main():
     # Set Defaults
     restricted_times_default = {
@@ -176,7 +184,10 @@ def main():
         sys.exit(0)
 
     print("❌ Merging is not allowed during the specified time.")
-    pr_number = int(os.environ["GITHUB_PR_NUMBER"])
+
+    # Logic to post to Github and handle existing comments
+    github_ref = os.environ["GITHUB_REF"]
+    pr_number = parse_pull_request_id(github_ref)
     post_comment_on_pr(github_token, pr_number, custom_message, check_existing_comment)
     sys.exit(1)
 
