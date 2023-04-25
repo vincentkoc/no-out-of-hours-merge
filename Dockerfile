@@ -12,7 +12,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /entrypoint.sh
-COPY main.py /main.py
+COPY src/main.py /src/main.py
 
 RUN chmod +x /entrypoint.sh
 
