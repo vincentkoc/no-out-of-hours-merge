@@ -1,0 +1,17 @@
+name: Stale Bot
+on:
+    schedule:
+        - cron: 30 1 * * *
+
+jobs:
+    stale:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/stale@v4
+              with:
+                  stale-issue-message: This issue has not been touched in quite sometime and is now marked as stale.
+                  stale-pr-message: This pull request has not been touched in quite sometime and is now marked as stale.
+                  days-before-issue-stale: 30
+                  days-before-pr-stale: 45
+                  days-before-issue-close: 5
+                  days-before-pr-close: 10
