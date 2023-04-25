@@ -23,11 +23,11 @@ RUN apt-get update -yqq && \
 COPY entrypoint.sh /entrypoint.sh
 COPY src/main.py /src/main.py
 
+RUN useradd -u 8877 dummy
 RUN chmod +x /entrypoint.sh
 RUN chown -R dummy:dummy /entrypoint.sh && \
     chown -R dummy:dummy /src/
 
-RUN useradd -u 8877 dummy
 USER dummy
 
 ENTRYPOINT ["/entrypoint.sh"]
