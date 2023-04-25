@@ -46,15 +46,31 @@ jobs:
         with:
           python-version: 3.9
 
-
       - name: Block merge during specified times
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CI_PR_TITLE: ${{ github.event.pull_request.title }}
-          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           TIMEZONE: "Australia/Sydney"
-          RESTRICTED_TIMES: '{"mon": [[0, 7], [16.5, 24]], "tue": [[0, 7], [16.5, 24]], "wed": [[0, 7], [16.5, 24]], "thu": [[0, 7], [16.5, 24]], "fri": [[0, 7], [16.5, 24]], "sat": [[0, 24]], "sun": [[0, 24]]}'
-          CUSTOM_MESSAGE: "⚠️ **PR merging is not allowed outside business hours.** ⚠️"
+          RESTRICTED_TIMES: >
+            {
+              "weekly": [
+                {
+                  "days": ["mon", "tue", "wed", "thu", "fri"],
+                  "intervals": [[0, 7], [16.5, 24]]
+                }
+              ],
+              "dates": [
+                {
+                  "date": "2023-12-25",
+                  "intervals": [[0, 24]]
+                }
+              ],
+              "holidays": {
+                "country": "GB",
+                "state": "UK",
+                "intervals": [[0, 24]]
+              }
+            }
+          CUSTOM_MESSAGE: "⚠️ **PR merging is not allowed outside business hours. Let's not be a cowboy!** ⚠️"
         run: no-weekend-merge
 
 ```
@@ -63,9 +79,11 @@ jobs:
 
 You can configure the action using the following environment variables:
 
+- `GITHUB_TOKEN`: Required to post a message back to the PR.
+- `CUSTOM_MESSAGE`: The custom message that will be posted as a comment on the pull request if merging is not allowed (default: `"⚠️ PR merging is not allowed outside business hours. ⚠️"`).
+- `CHECK_EXISTING_COMMENT`: Dont post the same message twice (default: enabled)
 - `TIMEZONE`: The timezone used for checking the current time (default: `"Australia/Sydney"`).
 - `RESTRICTED_TIMES`: A JSON string containing the restricted times for each day of the week (default: the provided example in the Usage section).
-- `CUSTOM_MESSAGE`: The custom message that will be posted as a comment on the pull request if merging is not allowed (default: `"⚠️ PR merging is not allowed outside business hours. ⚠️"`).
 
 ## License
 
