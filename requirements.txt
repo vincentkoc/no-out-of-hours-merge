@@ -1,2 +1,2 @@
-pytz
-github
+PyGithub==1.55
+pytz==2021.3
