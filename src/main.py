@@ -67,7 +67,7 @@ def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
                 + " It should be a list of tuples."
             )
         for interval in rule["intervals"]:
-            if not isinstance(interval, tuple) or len(interval) != 2:
+            if not isinstance(interval, list) or len(interval) != 2:
                 raise ValueError(
                     f"Invalid interval '{interval}' for '{rule['days']}'"
                     + " in restricted_times. It should be a tuple with two numbers."
@@ -132,11 +132,11 @@ def main():
         "weekly": [
             {
                 "days": ["mon", "tue", "wed", "thu", "fri"],
-                "intervals": [(0, 7), (16.5, 24)],
+                "intervals": [[0, 7], [16.5, 24]],
             }
         ],
-        "dates": [{"date": "2023-12-25", "intervals": [(0, 24)]}],
-        "holidays": {"country": "AU", "state": "NSW", "intervals": [(0, 24)]},
+        "dates": [{"date": "2023-12-25", "intervals": [[0, 24]]}],
+        "holidays": {"country": "AU", "state": "NSW", "intervals": [[0, 24]]},
     }
 
     # Get the inputs from the environment

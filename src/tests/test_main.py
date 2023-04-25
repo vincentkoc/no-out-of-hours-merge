@@ -42,17 +42,17 @@ class TestMain(unittest.TestCase):
             "weekly": [
                 {
                     "days": ["mon", "tue", "wed", "thu", "fri"],
-                    "intervals": [(0, 7), (16.5, 24)],
+                    "intervals": [[0, 7], [16.5, 24]],
                 }
             ],
-            "dates": [{"date": "2023-12-25", "intervals": [(0, 24)]}],
-            "holidays": {"country": "US", "state": "CA", "intervals": [(0, 24)]},
+            "dates": [{"date": "2023-12-25", "intervals": [[0, 24]]}],
+            "holidays": {"country": "AU", "state": "NSW", "intervals": [[0, 24]]},
         }
         invalid_restricted_times = {
             "weekly": [
                 {
                     "days": ["invalid", "tue", "wed", "thu", "fri"],
-                    "intervals": [(0, 7), (16.5, 24)],
+                    "intervals": [[0, 7], [16.5, 24]],
                 }
             ]
         }
@@ -88,12 +88,12 @@ class TestMain(unittest.TestCase):
             "weekly": [
                 {
                     "days": ["mon", "tue", "wed", "thu", "fri"],
-                    "intervals": [(0, 7), (16.5, 24)],
+                    "intervals": [[0, 7], [16.5, 24]],
                 },
-                {"days": ["sat", "sun"], "intervals": [(0, 24)]},
+                {"days": ["sat", "sun"], "intervals": [[0, 24]]},
             ],
             "dates": [],
-            "holidays": {"country": "US", "state": "CA", "intervals": [(0, 24)]},
+            "holidays": {"country": "US", "state": "CA", "intervals": [[0, 24]]},
         }
         timezone = "Europe/London"
 
