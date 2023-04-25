@@ -29,5 +29,4 @@ RUN chown -R dummy:dummy /entrypoint.sh && \
     chown -R dummy:dummy /src/
 
 USER dummy
-
 ENTRYPOINT ["/entrypoint.sh"]
