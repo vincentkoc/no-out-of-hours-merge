@@ -19,9 +19,9 @@ RUN apt-get update -yqq && \
     /usr/share/doc \
     /usr/share/doc-base
 
-
 COPY entrypoint.sh /entrypoint.sh
 COPY src/main.py /src/main.py
+COPY requirements*.txt /
 
 RUN useradd -u 8877 dummy
 RUN chmod +x /entrypoint.sh
@@ -29,4 +29,8 @@ RUN chown -R dummy:dummy /entrypoint.sh && \
     chown -R dummy:dummy /src/
 
 USER dummy
+
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
 ENTRYPOINT ["/entrypoint.sh"]
