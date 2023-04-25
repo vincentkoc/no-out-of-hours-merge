@@ -43,7 +43,24 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TIMEZONE: Australia/Sydney
                   RESTRICTED_TIMES: >-
-                      {"mon": [(0, 9), (17, 24)], "tue": [(0, 9), (17, 24)], "wed": [(0, 9), (17, 24)],
-                      "thu": [(0, 9), (17, 24)], "fri": [(0, 9), (17, 24)], "sat": [(0, 24)], "sun": [(0, 24)]}
+                      {
+                          "weekly": [
+                              {
+                                  "days": ["mon", "tue", "wed", "thu", "fri"],
+                                  "intervals": [
+                                      [0, 9],
+                                      [17, 24]
+                                  ]
+                              },
+                              {
+                                  "days": ["sat", "sun"],
+                                  "intervals": [
+                                      [0, 24]
+                                  ]
+                              }
+                          ],
+                          "dates": [],
+                          "holidays": {}
+                      }
                   CUSTOM_MESSAGE: ⚠️ **PR merging is not allowed outside business hours.** ⚠️
                   CHECK_EXISTING_COMMENT: 'true'
