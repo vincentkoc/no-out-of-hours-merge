@@ -56,14 +56,14 @@ def validate_restricted_times(
     valid_days = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
     if not set(restricted_times.keys()).issubset(valid_days):
         raise ValueError(
-            "Invalid day keys in the restricted_times dictionary. Use "
+            "❌ Invalid day keys in the restricted_times dictionary. Use "
             + "'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'."
         )
 
     for day, intervals in restricted_times.items():
         if not isinstance(intervals, list):
             raise ValueError(
-                f"Invalid value for '{day}' in restricted_times. "
+                f"❌ Invalid value for '{day}' in restricted_times. "
                 + " It should be a list of tuples."
             )
         for interval in intervals:
@@ -115,11 +115,26 @@ def is_restricted_time(timezone, restricted_times):
 
 
 def main():
+    # Set Defaults
+    restricted_times_default = {
+        "weekly": [
+            {"days": [MO, TU, WE, TH, FR], "intervals": [(0, 7), (16.5, 24)]},
+            {"days": [SA, SU], "intervals": [(0, 24)]},
+        ],
+        "dates": [
+            {"date": "2023-12-25", "intervals": [(0, 24)]},
+            {"date": "2023-12-26", "intervals": [(0, 24)]},
+        ],
+        "holidays": {"country": "US", "state": "CA", "intervals": [(0, 24)]},
+    }
+
     # Get the inputs from the environment
     github_token = os.environ["INPUT_GITHUB_TOKEN"]
     pr_title = os.environ["INPUT_PR_TITLE"]
     timezone = os.environ.get("INPUT_TIMEZONE", "Australia/Sydney")
-    restricted_times_json = os.environ.get("INPUT_RESTRICTED_TIMES", None)
+    restricted_times_json = os.environ.get(
+        "INPUT_RESTRICTED_TIMES", restricted_times_default
+    )
     custom_message = os.environ.get(
         "INPUT_CUSTOM_MESSAGE",
         "⚠️ **PR merging is not allowed outside business hours.** ⚠️",
@@ -130,21 +145,11 @@ def main():
 
     # Validate the inputs
     validate_timezone(timezone)
-    if restricted_times_json:
+    try:
         restricted_times = json.loads(restricted_times_json)
         validate_restricted_times(restricted_times)
-    else:
-        restricted_times = {
-            "weekly": [
-                {"days": [MO, TU, WE, TH, FR], "intervals": [(0, 7), (16.5, 24)]},
-                {"days": [SA, SU], "intervals": [(0, 24)]},
-            ],
-            "dates": [
-                {"date": "2023-12-25", "intervals": [(0, 24)]},
-                {"date": "2023-12-26", "intervals": [(0, 24)]},
-            ],
-            "holidays": {"country": "US", "state": "CA", "intervals": [(0, 24)]},
-        }
+    except ValueError:
+        raise ValueError("❌ Error parsing RESTRICTED_TIMES")
     validate_custom_message(custom_message)
 
     if not is_restricted_time(timezone, restricted_times):
