@@ -1,6 +1,13 @@
 name: Test No Out Hours Merge Action
 
-on: [push, pull_request]
+on:
+    pull_request:
+        branches:
+            - master
+        types: [opened, synchronize, edited]
+    push:
+        branches:
+            - master
 
 jobs:
     test:
@@ -8,6 +15,10 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
+
+            - name: Import .env File
+              shell: bash
+              run: cat .env >>${GITHUB_ENV}
 
             - name: Set up Python
               uses: actions/setup-python@v2
