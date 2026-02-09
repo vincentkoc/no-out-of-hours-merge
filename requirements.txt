@@ -1,5 +1,5 @@
 PyGithub==1.59.0
-pytz==2021.3
+pytz==2023.3.post1
 python-dateutil>=2.8.0
 holidays>=0.11.3
 regex>=2023.3.22
