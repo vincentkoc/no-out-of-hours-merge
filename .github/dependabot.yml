@@ -5,10 +5,10 @@ updates:
       schedule:
           interval: weekly
       reviewers:
-          - koconder
+          - vincentkoc
     - package-ecosystem: pip
       directory: /
       schedule:
           interval: weekly
       reviewers:
-          - koconder
+          - vincentkoc

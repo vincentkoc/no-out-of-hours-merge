@@ -4,6 +4,7 @@ import unittest
 from main import (  # isort:skip
     is_holiday,
     is_restricted_time,
+    parse_pull_request_id,
     validate_custom_message,
     validate_restricted_times,
     validate_timezone,
@@ -56,6 +57,7 @@ class TestMain(unittest.TestCase):
                 }
             ]
         }
+        invalid_interval = {"weekly": [{"days": ["mon"], "intervals": [[-1, 25]]}]}
         self.assertIsNone(
             validate_restricted_times(valid_restricted_times),
             "Valid restricted times should pass validation.",
@@ -64,6 +66,10 @@ class TestMain(unittest.TestCase):
             ValueError, msg="Invalid restricted times should raise ValueError."
         ):
             validate_restricted_times(invalid_restricted_times)
+        with self.assertRaises(
+            ValueError, msg="Out-of-range intervals should raise ValueError."
+        ):
+            validate_restricted_times(invalid_interval)
 
     def test_is_holiday(self):
         fixed_datetime = datetime.datetime(
@@ -112,6 +118,24 @@ class TestMain(unittest.TestCase):
         with freeze_time(fixed_datetime):
             result = is_restricted_time(timezone, restricted_times, now=fixed_datetime)
             self.assertTrue(result, "This time should be restricted.")
+
+    def test_is_restricted_time_without_dates(self):
+        restricted_times = {
+            "weekly": [{"days": ["mon"], "intervals": [[9, 10]]}],
+            "holidays": {},
+        }
+        fixed_datetime = datetime.datetime(2023, 1, 3, 12, 0, tzinfo=pytz.UTC)
+
+        result = is_restricted_time(
+            "Europe/London", restricted_times, now=fixed_datetime
+        )
+
+        self.assertFalse(result, "Missing dates should be treated as no date rules.")
+
+    def test_parse_pull_request_id(self):
+        self.assertEqual(parse_pull_request_id("refs/pull/123/merge"), 123)
+        with self.assertRaises(ValueError):
+            parse_pull_request_id("refs/heads/main")
 
 
 if __name__ == "__main__":

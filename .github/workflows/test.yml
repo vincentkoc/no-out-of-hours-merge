@@ -5,13 +5,14 @@ on:
         types: [opened, synchronize, edited]
     push:
         branches:
-            - master
+            - main
 
 concurrency:
     group: environment-${{ github.ref }}
     cancel-in-progress: true
 
 permissions:
+    contents: read
     issues: write
     pull-requests: write
 
@@ -45,6 +46,7 @@ jobs:
               uses: ./ # Use an action in the same repository
               with:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  PR_TITLE: ${{ github.event.pull_request.title || github.event.head_commit.message }}
                   TIMEZONE: Australia/Sydney
                   RESTRICTED_TIMES: >-
                       {

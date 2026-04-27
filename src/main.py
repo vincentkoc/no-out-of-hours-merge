@@ -3,13 +3,26 @@ import json
 import os
 import re
 import sys
-from typing import Any, Dict
+from functools import lru_cache
+from typing import Any, Dict, Optional
 
 import holidays
 import pytz
 from dateutil import parser
 from dateutil.rrule import FR, MO, SA, SU, TH, TU, WE
 from github import Github
+
+DAY_MAP = {
+    "mon": MO,
+    "tue": TU,
+    "wed": WE,
+    "thu": TH,
+    "fri": FR,
+    "sat": SA,
+    "sun": SU,
+}
+VALID_DAYS = set(DAY_MAP)
+PULL_REQUEST_REF_PATTERN = re.compile(r"refs/pull/(\d+)/merge")
 
 
 def post_comment_on_pr(
@@ -38,24 +51,32 @@ def validate_timezone(timezone: str) -> None:
         )
 
 
+@lru_cache(maxsize=32)
+def get_country_holidays(country: str, subdiv: Optional[str]):
+    return holidays.country_holidays(country=country, subdiv=subdiv)
+
+
 def is_holiday(now, holidays_config):
     if not holidays_config:
         return False
 
-    country_holidays = holidays.country_holidays(
+    country_holidays = get_country_holidays(
         country=holidays_config["country"], subdiv=holidays_config.get("state", None)
     )
 
     return now.date() in country_holidays
 
 
+def is_inside_interval(hour, intervals):
+    return any(start <= hour < end for start, end in intervals)
+
+
 def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
     if "weekly" not in restricted_times:
         raise ValueError("Missing 'weekly' key in restricted_times dictionary.")
 
-    valid_days = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
     for rule in restricted_times["weekly"]:
-        if not set(rule["days"]).issubset(valid_days):
+        if not set(rule["days"]).issubset(VALID_DAYS):
             raise ValueError(
                 "Invalid day keys in the restricted_times dictionary. Use "
                 + "'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'."
@@ -72,11 +93,11 @@ def validate_restricted_times(restricted_times: Dict[str, Any]) -> None:
                     f"Invalid interval '{interval}' for '{rule['days']}'"
                     + " in restricted_times. It should be a tuple with two numbers."
                 )
-            if interval[1] <= interval[0]:
+            if interval[0] < 0 or interval[1] > 24 or interval[1] <= interval[0]:
                 raise ValueError(
                     f"Invalid interval '{interval}' for '{rule['days']}'"
-                    + " in restricted_times. The second number should"
-                    + " be greater than the first."
+                    + " in restricted_times. Intervals must be within 0-24"
+                    + " and the second number should be greater than the first."
                 )
 
 
@@ -90,45 +111,29 @@ def is_restricted_time(timezone, restricted_times, now=None):
     if now is None:
         now = datetime.datetime.now(tz)
     now = now.astimezone(tz)
+    current_hour = now.hour + now.minute / 60
 
     for rule in restricted_times["weekly"]:
-        day_map = {
-            "mon": MO,
-            "tue": TU,
-            "wed": WE,
-            "thu": TH,
-            "fri": FR,
-            "sat": SA,
-            "sun": SU,
-        }
-        mapped_days = [day_map[d] for d in rule["days"]]
-        if now.weekday() in [d.weekday for d in mapped_days] and any(
-            start <= now.hour + now.minute / 60 < end
-            for start, end in rule["intervals"]
+        mapped_days = [DAY_MAP[d] for d in rule["days"]]
+        if now.weekday() in [d.weekday for d in mapped_days] and is_inside_interval(
+            current_hour, rule["intervals"]
         ):
             return True
 
-    for rule in restricted_times["dates"]:
+    for rule in restricted_times.get("dates", []):
         date = parser.parse(rule["date"]).date()
-        if now.date() == date and any(
-            start <= now.hour + now.minute / 60 < end
-            for start, end in rule["intervals"]
-        ):
+        if now.date() == date and is_inside_interval(current_hour, rule["intervals"]):
             return True
 
     holiday_intervals = restricted_times.get("holidays", {}).get("intervals", [])
     return bool(
         is_holiday(now, restricted_times.get("holidays"))
-        and any(
-            start <= now.hour + now.minute / 60 < end
-            for start, end in holiday_intervals
-        )
+        and is_inside_interval(current_hour, holiday_intervals)
     )
 
 
 def parse_pull_request_id(github_ref):
-    pattern = r"refs/pull/(\d+)/merge"
-    if match := re.search(pattern, github_ref):
+    if match := PULL_REQUEST_REF_PATTERN.search(github_ref):
         return int(match[1])
     else:
         raise ValueError(f"Invalid GitHub ref: {github_ref}")
@@ -144,13 +149,13 @@ def main():
             }
         ],
         "dates": [{"date": "2023-12-25", "intervals": [[0, 24]]}],
-        "holidays": {"country": "AU", "state": "NSW", "intervals": [[0, 24]]},
+        "holidays": {"country": "GB", "state": "UK", "intervals": [[0, 24]]},
     }
 
     # Get the inputs from the environment
     github_token = os.environ["INPUT_GITHUB_TOKEN"]
     pr_title = os.environ["INPUT_PR_TITLE"]
-    timezone = os.environ.get("INPUT_TIMEZONE", "Australia/Sydney")
+    timezone = os.environ.get("INPUT_TIMEZONE", "Europe/London")
     restricted_times_json = os.environ.get(
         "INPUT_RESTRICTED_TIMES", json.dumps(restricted_times_default)
     )
