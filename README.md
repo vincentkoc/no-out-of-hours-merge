@@ -33,22 +33,23 @@ on:
       - reopened
 
 jobs:
-  no_weekend_merge:
+  no_out_of_hours_merge:
     name: Out of Hours Check ⏰
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
+        uses: actions/checkout@v6
 
       - name: Block merge during specified times
-        env:
+        uses: vincentkoc/no-out-of-hours-merge@v1
+        with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
           TIMEZONE: "Australia/Sydney"
           RESTRICTED_TIMES: >
             {
@@ -71,18 +72,18 @@ jobs:
               }
             }
           CUSTOM_MESSAGE: "⚠️ **PR merging is not allowed outside business hours. Let's not be a cowboy!** ⚠️"
-        run: no-weekend-merge
 
 ```
 
 ## Configuration
 
-You can configure the action using the following environment variables:
+You can configure the action using the following inputs:
 
 - `GITHUB_TOKEN`: Required to post a message back to the PR.
+- `PR_TITLE`: Pull request title used to allow `hotfix:` bypasses.
 - `CUSTOM_MESSAGE`: The custom message that will be posted as a comment on the pull request if merging is not allowed (default: `"⚠️ PR merging is not allowed outside business hours. ⚠️"`).
-- `CHECK_EXISTING_COMMENT`: Dont post the same message twice (default: enabled)
-- `TIMEZONE`: The timezone used for checking the current time (default: `"Australia/Sydney"`).
+- `CHECK_EXISTING_COMMENT`: Don't post the same message twice (default: enabled).
+- `TIMEZONE`: The timezone used for checking the current time (default: `"Europe/London"`).
 - `RESTRICTED_TIMES`: A JSON string containing the restricted times for each day of the week (default: the provided example in the Usage section).
 
 ## License
